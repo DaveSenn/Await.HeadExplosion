@@ -23,11 +23,11 @@ internal class ConfigureAwait : IRunnable
     private async Task Method()
     {
         this.PrintBeforeDelay();
-        
+
         await Task.Delay( 100 )
                   .ConfigureAwait( false );
         this.PrintAfterDelayConfigureAwait();
-        
+
         await Task.Delay( 100 );
         this.PrintAfterDelay();
     }

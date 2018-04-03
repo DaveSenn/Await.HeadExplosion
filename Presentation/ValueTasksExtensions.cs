@@ -24,7 +24,12 @@ https://github.com/adamsitnik/StateOfTheDotNetPerformance
 
     public static async Task<Int32> LoadFromFileAndCache( this ValueTasks runnable, String key )
     {
-        using ( var stream = File.OpenText( @"Values.txt" ) )
+        const String fileName = @"Values.txt";
+        if ( !File.Exists( fileName ) )
+            using ( var stream = new StreamWriter( File.OpenWrite( fileName ) ) )
+                await stream.WriteLineAsync( $"{key};10" );
+
+        using ( var stream = File.OpenText( fileName ) )
         {
             String line;
             while ( ( line = await stream.ReadLineAsync() ) != null )

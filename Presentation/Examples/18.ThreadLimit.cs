@@ -8,8 +8,11 @@ internal class ThreadLimit : IRunnable
     public async Task Run()
     {
         await LimitingThreads( TaskCreationOptions.None, false );
+        Console.WriteLine( "\n\n" );
         await LimitingThreads( TaskCreationOptions.None, true );
+        Console.WriteLine( "\n\n" );
         await LimitingThreads( TaskCreationOptions.HideScheduler, false );
+        Console.WriteLine( "\n\n" );
         await LimitingThreads( TaskCreationOptions.HideScheduler, true );
     }
 
@@ -18,11 +21,11 @@ internal class ThreadLimit : IRunnable
         this.PrintOptions( options, configureAwait );
 
         var scheduler = new LimitedConcurrencyLevelTaskScheduler( 1 );
-        return this.PumpWithSemaphoreConcurrencyTwo( ( current, token ) =>
-        {
-            return Task.Factory.StartNew( () => { return WorkUnderSpecialScheduler( configureAwait, current ); }, CancellationToken.None, options, scheduler )
-                       .Unwrap();
-        } );
+        return this.PumpWithSemaphoreConcurrencyTwo( ( current, token )
+                                                         => Task
+                                                            .Factory
+                                                            .StartNew( () => WorkUnderSpecialScheduler( configureAwait, current ), CancellationToken.None, options, scheduler )
+                                                            .Unwrap() );
     }
 
     private Task WorkUnderSpecialScheduler( Boolean configureAwait, Int32 current, CancellationToken token = default )

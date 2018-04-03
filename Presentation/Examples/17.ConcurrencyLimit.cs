@@ -18,20 +18,22 @@ internal class ConcurrencyLimit : IRunnable
         {
             var token = this.TokenThatCancelsAfterTwoSeconds();
             var workCount = 0;
+
             while ( !token.IsCancellationRequested )
             {
                 await semaphore.WaitAsync( token );
 
                 var runningTask = this.SimulateWorkThatTakesOneSecond( workCount++ );
 
-                runningTask.ContinueWith( ( t, state ) =>
-                                          {
-                                              var s = (SemaphoreSlim) state;
-                                              s.Release();
-                                          },
-                                          semaphore,
-                                          TaskContinuationOptions.ExecuteSynchronously )
-                           .Ignore();
+                runningTask
+                    .ContinueWith( ( t, state ) =>
+                                   {
+                                       var s = (SemaphoreSlim) state;
+                                       s.Release();
+                                   },
+                                   semaphore,
+                                   TaskContinuationOptions.RunContinuationsAsynchronously )
+                    .Ignore();
             }
         } );
 
