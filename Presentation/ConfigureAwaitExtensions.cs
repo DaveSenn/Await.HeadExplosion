@@ -56,8 +56,8 @@ await Continuation(); // <-- affected by line above
     }
 
     public static Task WrapInContext( this ConfigureAwait runnable, Func<Task> action )
-    {
-        return Task.Factory.StartNew( () => { return action(); }, CancellationToken.None, TaskCreationOptions.None, scheduler )
-                   .Unwrap();
-    }
+        => Task
+           .Factory
+           .StartNew( action, CancellationToken.None, TaskCreationOptions.None, scheduler )
+           .Unwrap();
 }

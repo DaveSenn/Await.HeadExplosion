@@ -115,7 +115,7 @@ internal class Program
     {
         if ( explanationHeaderEnabled )
         {
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine();
             Console.WriteLine( "|================================================|" );
             Console.WriteLine( $"| {"Remember".PadRight( 47 )}|" );

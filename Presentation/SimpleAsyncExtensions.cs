@@ -15,11 +15,11 @@ internal static class SimpleAsyncExtensions
 
     public static void PrintEnd( this SimpleAsync runnable )
     {
-        Console.WriteLine( $"done {Thread.CurrentThread.ManagedThreadId}" );
+        Console.WriteLine( $"done ManagedThreadId: {Thread.CurrentThread.ManagedThreadId}" );
     }
 
     public static void PrintStart( this SimpleAsync runnable )
     {
-        Console.WriteLine( $"start {Thread.CurrentThread.ManagedThreadId}" );
+        Console.WriteLine( $"start ManagedThreadId: {Thread.CurrentThread.ManagedThreadId}" );
     }
 }

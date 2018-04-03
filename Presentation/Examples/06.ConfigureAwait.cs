@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 [Order( 6 )]
@@ -10,6 +11,7 @@ internal class ConfigureAwait : IRunnable
             this.PrintStart();
             await Method();
             this.PrintEnd();
+            Console.WriteLine( "\n\n" );
 
             this.PrintStart();
             await Method()
@@ -21,9 +23,11 @@ internal class ConfigureAwait : IRunnable
     private async Task Method()
     {
         this.PrintBeforeDelay();
+        
         await Task.Delay( 100 )
                   .ConfigureAwait( false );
         this.PrintAfterDelayConfigureAwait();
+        
         await Task.Delay( 100 );
         this.PrintAfterDelay();
     }

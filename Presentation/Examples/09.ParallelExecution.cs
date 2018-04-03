@@ -7,7 +7,7 @@ public class ParallelExecution : IRunnable
 {
     public Task Run()
     {
-        var concurrent = Enumerable.Range( 0, 4 )
+        var concurrent = Enumerable.Range( 0, 20 )
                                    .Select( t => Task.Run( () =>
                                    {
                                        this.PrintStart( t );
