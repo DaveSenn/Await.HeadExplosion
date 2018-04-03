@@ -2,54 +2,11 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-static class ValueTasksExtensions
+internal static class ValueTasksExtensions
 {
-    public static async Task LoopTenTimesAndSumResult(this ValueTasks runnable, Func<int, Task<int>> action)
+    public static void Explain( this ValueTasks runnable, TextWriter writer )
     {
-        int total = 0;
-        for (int i = 0; i < 10; i++)
-        {
-            total += await action(i);
-        }
-        Console.WriteLine($"Result {total}");
-    }
-
-    public static async Task<int> LoadFromFileAndCache(this ValueTasks runnable, string key)
-    {
-        using (var stream = File.OpenText(@"Values.txt"))
-        {
-            string line;
-            while ((line = await stream.ReadLineAsync()) != null)
-            {
-                var splitted = line.Split(Convert.ToChar(";"));
-                var k = splitted[0];
-                var v = Convert.ToInt32(splitted[1]);
-
-                if (k != key)
-                {
-                    continue;
-                }
-
-                runnable.cachedValues.TryAdd(k, v);
-                return v;
-            }
-        }
-        return 0;
-    }
-
-    public static void PrintFastPath(this ValueTasks runnable, int i)
-    {
-        Console.WriteLine($"Fast path {i}.");
-    }
-
-    public static void PrintAsyncPath(this ValueTasks runnable, int i)
-    {
-        Console.WriteLine($"Async path {i}.");
-    }
-
-    public static void Explain(this ValueTasks runnable, TextWriter writer)
-    {
-        writer.WriteLine(@"
+        writer.WriteLine( @"
 - Nice for highperf scenarios and only then!
 - Complex to use and easy to get wrong
 - Stats:
@@ -62,6 +19,46 @@ static class ValueTasksExtensions
  |    ConsumeValueTaskCrazy |    1000 |  4,140.6 ns | 211.741 ns |   604.109 ns |  4,201.2 ns |   0.89 |     0.28 |       - |       0 B |        
 
 https://github.com/adamsitnik/StateOfTheDotNetPerformance        
-");        
+" );
+    }
+
+    public static async Task<Int32> LoadFromFileAndCache( this ValueTasks runnable, String key )
+    {
+        using ( var stream = File.OpenText( @"Values.txt" ) )
+        {
+            String line;
+            while ( ( line = await stream.ReadLineAsync() ) != null )
+            {
+                var splitted = line.Split( Convert.ToChar( ";" ) );
+                var k = splitted[0];
+                var v = Convert.ToInt32( splitted[1] );
+
+                if ( k != key )
+                    continue;
+
+                runnable.cachedValues.TryAdd( k, v );
+                return v;
+            }
+        }
+
+        return 0;
+    }
+
+    public static async Task LoopTenTimesAndSumResult( this ValueTasks runnable, Func<Int32, Task<Int32>> action )
+    {
+        var total = 0;
+        for ( var i = 0; i < 10; i++ )
+            total += await action( i );
+        Console.WriteLine( $"Result {total}" );
+    }
+
+    public static void PrintAsyncPath( this ValueTasks runnable, Int32 i )
+    {
+        Console.WriteLine( $"Async path {i}." );
+    }
+
+    public static void PrintFastPath( this ValueTasks runnable, Int32 i )
+    {
+        Console.WriteLine( $"Fast path {i}." );
     }
 }

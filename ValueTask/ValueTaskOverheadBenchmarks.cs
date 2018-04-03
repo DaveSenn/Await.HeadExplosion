@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
@@ -9,47 +10,47 @@ using BenchmarkDotNet.Attributes.Jobs;
 [ShortRunJob]
 public class ValueTaskOverheadBenchmarks
 {
-    [Params(100, 1000)]
-    public int Repeats { get; set; }
+    #region Properties
+
+    [Params( 100, 1000 )]
+    public Int32 Repeats { get; set; }
+
+    #endregion
 
     [Benchmark]
-    public Task<int> ConsumeTask() => ConsumeTask(Repeats);
+    public Task<Int32> ConsumeTask() => ConsumeTask( Repeats );
 
     [Benchmark]
-    public ValueTask<int> ConsumeValueTaskWrong() => ConsumeWrong(Repeats);
+    public ValueTask<Int32> ConsumeValueTaskCrazy() => ConsumeCrazy( Repeats );
 
-    [Benchmark(Baseline = true)]
-    public ValueTask<int> ConsumeValueTaskProperly() => ConsumeProperly(Repeats);
+    [Benchmark( Baseline = true )]
+    public ValueTask<Int32> ConsumeValueTaskProperly() => ConsumeProperly( Repeats );
 
     [Benchmark]
-    public ValueTask<int> ConsumeValueTaskCrazy() => ConsumeCrazy(Repeats);
+    public ValueTask<Int32> ConsumeValueTaskWrong() => ConsumeWrong( Repeats );
 
-    async Task<int> ConsumeTask(int repeats)
+    private ValueTask<Int32> ConsumeCrazy( Int32 repeats )
     {
-        int total = 0;
-        while (repeats-- > 0)
-            total += await SampleUsageAsync();
-
-        return total;
-    }
-
-    Task<int> SampleUsageAsync() => Task.FromResult(1);
-
-    async ValueTask<int> ConsumeWrong(int repeats)
-    {
-        int total = 0;
-        while (repeats-- > 0)
-            total += await SampleUsage();
-
-        return total;
-    }
-
-    async ValueTask<int> ConsumeProperly(int repeats)
-    {
-        int total = 0;
-        while (repeats-- > 0)
+        var total = 0;
+        while ( repeats-- > 0 )
         {
-            ValueTask<int> valueTask = SampleUsage(); // INLINEABLE
+            var valueTask = SampleUsage(); // INLINEABLE
+
+            if ( valueTask.IsCompleted )
+                total += valueTask.Result;
+            else
+                return ContinueAsync( valueTask, repeats, total );
+        }
+
+        return new ValueTask<Int32>( total );
+    }
+
+    private async ValueTask<Int32> ConsumeProperly( Int32 repeats )
+    {
+        var total = 0;
+        while ( repeats-- > 0 )
+        {
+            var valueTask = SampleUsage(); // INLINEABLE
 
             total += valueTask.IsCompleted
                 ? valueTask.Result
@@ -59,31 +60,33 @@ public class ValueTaskOverheadBenchmarks
         return total;
     }
 
-    ValueTask<int> ConsumeCrazy(int repeats)
+    private async Task<Int32> ConsumeTask( Int32 repeats )
     {
-        int total = 0;
-        while (repeats-- > 0)
-        {
-            ValueTask<int> valueTask = SampleUsage(); // INLINEABLE
+        var total = 0;
+        while ( repeats-- > 0 )
+            total += await SampleUsageAsync();
 
-            if (valueTask.IsCompleted)
-                total += valueTask.Result;
-            else
-                return ContinueAsync(valueTask, repeats, total);
-        }
-
-        return new ValueTask<int>(total);
+        return total;
     }
 
-    async ValueTask<int> ContinueAsync(ValueTask<int> valueTask, int repeats, int total)
+    private async ValueTask<Int32> ConsumeWrong( Int32 repeats )
+    {
+        var total = 0;
+        while ( repeats-- > 0 )
+            total += await SampleUsage();
+
+        return total;
+    }
+
+    private async ValueTask<Int32> ContinueAsync( ValueTask<Int32> valueTask, Int32 repeats, Int32 total )
     {
         total += await valueTask;
 
-        while (repeats-- > 0)
+        while ( repeats-- > 0 )
         {
             valueTask = SampleUsage();
 
-            if (valueTask.IsCompleted)
+            if ( valueTask.IsCompleted )
                 total += valueTask.Result;
             else
                 total += await valueTask;
@@ -92,18 +95,18 @@ public class ValueTaskOverheadBenchmarks
         return total;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)] // super important!
-    ValueTask<int> SampleUsage()
+    private Task<Int32> ExecuteAsync() => Task.FromResult( 1 );
+
+    private Int32 ExecuteSynchronous() => 1;
+
+    [MethodImpl( MethodImplOptions.NoInlining )]
+    private Boolean IsFastSynchronousExecutionPossible() => true;
+
+    [MethodImpl( MethodImplOptions.AggressiveInlining )] // super important!
+    private ValueTask<Int32> SampleUsage()
         => IsFastSynchronousExecutionPossible()
-            ? new ValueTask<int>(
+            ? new ValueTask<Int32>(ExecuteSynchronous() ) // INLINEABLE!!!
+            : new ValueTask<Int32>(ExecuteAsync() );
 
-                result: ExecuteSynchronous()) // INLINEABLE!!!
-            : new ValueTask<int>(
-                task: ExecuteAsync());
-
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    bool IsFastSynchronousExecutionPossible() => true;
-
-    int ExecuteSynchronous() => 1;
-    Task<int> ExecuteAsync() => Task.FromResult(1);
+    private Task<Int32> SampleUsageAsync() => Task.FromResult( 1 );
 }

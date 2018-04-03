@@ -1,12 +1,12 @@
 using System.IO;
 
-static class CancelTaskOperationGracefulExtensions
+internal static class CancelTaskOperationGracefulExtensions
 {
-    public static void Explain(this CancelTaskOperationGraceful runnable, TextWriter writer)
+    public static void Explain( this CancelTaskOperationGraceful runnable, TextWriter writer )
     {
-        writer.WriteLine(@"
+        writer.WriteLine( @"
 - It is up to the implementor to decide whether exceptions should be observed by the caller
 - For graceful shutdown scenarios the root task should not transition into 'canceled'
-");
+" );
     }
 }

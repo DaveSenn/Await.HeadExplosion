@@ -2,10 +2,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 
-[Config(typeof(Config))]
+[Config( typeof(Config) )]
 public class TaskImprovements
 {
-    [Benchmark(Baseline = true)]
+    [Benchmark]
+    public async Task Actions()
+    {
+        await SomeMethod();
+    }
+
+    [Benchmark( Baseline = true )]
     public async Task Return()
     {
         await DoWorkReturn();
@@ -17,24 +23,15 @@ public class TaskImprovements
         await DoWork();
     }
 
-    [Benchmark]
-    public async Task Actions()
+    private static async Task DoWork()
     {
-        await SomeMethod();
+        await Task.Delay( 1 );
     }
 
-    static Task DoWorkReturn()
-    {
-        return Task.Delay(1);
-    }
+    private static Task DoWorkReturn() => Task.Delay( 1 );
 
-    static async Task DoWork()
+    private static async Task SomeMethod()
     {
-        await Task.Delay(1);
-    }
-
-    static async Task SomeMethod()
-    {
-        await Task.Run(() => Thread.Sleep(1));
+        await Task.Run( () => Thread.Sleep( 1 ) );
     }
 }

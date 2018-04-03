@@ -1,12 +1,17 @@
 using System;
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+[AttributeUsage( AttributeTargets.Class, Inherited = false )]
 public sealed class OrderAttribute : Attribute
 {
-    public int Order { get; }
+    #region Properties
 
-    public OrderAttribute(int order)
-    {
-        Order = order;
-    }
+    public Int32 Order { get; }
+
+    #endregion
+
+    #region Ctor
+
+    public OrderAttribute( Int32 order ) => Order = order;
+
+    #endregion
 }

@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
 
-[Order(15)]
+[Order( 15 )]
 public class StackTracesOhMy : IRunnable
 {
     public async Task Run()
     {
-        await this.PrintStackTrace(async () => await Level1());
+        await this.PrintStackTrace( async () => await Level1() );
     }
 
     public async Task Level1()
@@ -17,6 +17,6 @@ public class StackTracesOhMy : IRunnable
     public async Task Level6()
     {
         await Task.Yield();
-        throw new Exception("boom");
+        throw new Exception( "boom" );
     }
 }

@@ -3,8 +3,8 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-[Order(22)]
-class NotifyCompletion : IRunnable
+[Order( 22 )]
+internal class NotifyCompletion : IRunnable
 {
     public async Task Run()
     {
@@ -16,39 +16,42 @@ class NotifyCompletion : IRunnable
 
 public static class CultureAwaitExtensions
 {
-    public static CultureAwaiter GetAwaiter(this CultureInfo info)
-    {
-        return new CultureAwaiter(info);
-    }
+    public static CultureAwaiter GetAwaiter( this CultureInfo info ) => new CultureAwaiter( info );
+
+    #region Nested Types
 
     public struct CultureAwaiter : ICriticalNotifyCompletion
     {
         private readonly CultureInfo cultureInfo;
-        private Task task;
+        private readonly Task task;
 
-        public CultureAwaiter(CultureInfo cultureInfo)
+        public CultureAwaiter( CultureInfo cultureInfo )
         {
             this.cultureInfo = cultureInfo;
-            task = Task.Delay(2000);
+            task = Task.Delay( 2000 );
         }
 
         // magic property
-        public bool IsCompleted => task.IsCompleted;
+        public Boolean IsCompleted => task.IsCompleted;
 
-        public void OnCompleted(Action continuation)
+        public void OnCompleted( Action continuation )
         {
-            task.GetAwaiter().OnCompleted(continuation);
+            task.GetAwaiter()
+                .OnCompleted( continuation );
         }
 
-        public void UnsafeOnCompleted(Action continuation)
+        public void UnsafeOnCompleted( Action continuation )
         {
-            task.GetAwaiter().UnsafeOnCompleted(continuation);
+            task.GetAwaiter()
+                .UnsafeOnCompleted( continuation );
         }
 
         // magic Method
         public void GetResult()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("en-us");
+            CultureInfo.CurrentCulture = new CultureInfo( "en-us" );
         }
     }
+
+    #endregion
 }

@@ -2,15 +2,15 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-[Order(12)]
-class CancelTaskOperation : IRunnable
+[Order( 12 )]
+internal class CancelTaskOperation : IRunnable
 {
     public Task Run()
     {
         var tokenSource = new CancellationTokenSource();
-        tokenSource.CancelAfter(TimeSpan.FromSeconds(3));
+        tokenSource.CancelAfter( TimeSpan.FromSeconds( 3 ) );
         var token = tokenSource.Token;
 
-        return Task.Delay(TimeSpan.FromMinutes(1), token);
+        return Task.Delay( TimeSpan.FromMinutes( 1 ), token );
     }
 }

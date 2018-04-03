@@ -1,18 +1,20 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-class Simulator 
+
+internal class Simulator
 {
     public event EventHandler Fired = delegate { };
 
-    public void Start() 
+    public void Start()
     {
-        Task.Delay(500).ContinueWith(t => OnFired());
+        Task.Delay( 500 )
+            .ContinueWith( t => OnFired() );
     }
 
-    void OnFired() 
+    private void OnFired()
     {
-        Console.WriteLine($"Fire on {Thread.CurrentThread.ManagedThreadId}");
-        this.Fired(this, EventArgs.Empty);
+        Console.WriteLine( $"Fire on {Thread.CurrentThread.ManagedThreadId}" );
+        Fired( this, EventArgs.Empty );
     }
 }

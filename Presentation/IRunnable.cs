@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-interface IRunnable
+internal interface IRunnable
 {
     Task Run();
 }

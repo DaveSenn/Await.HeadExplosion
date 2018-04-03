@@ -1,39 +1,38 @@
 using System;
 using System.Collections.Concurrent;
-using System.Threading;
 using System.Threading.Tasks;
 
-[Order(20)]
-class ValueTasks : IRunnable
+[Order( 20 )]
+internal class ValueTasks : IRunnable
 {
+    #region Fields
+
+    internal ConcurrentDictionary<String, Int32> cachedValues = new ConcurrentDictionary<String, Int32>();
+
+    #endregion
+
     public Task Run()
     {
-        return this.LoopTenTimesAndSumResult(async i =>
+        return this.LoopTenTimesAndSumResult( async i =>
         {
-            ValueTask<int> valueTask = Get("Foo");
+            var valueTask = Get( "Foo" );
 
-            if (valueTask.IsCompleted)
+            if ( valueTask.IsCompleted )
             {
-                this.PrintFastPath(i);
+                this.PrintFastPath( i );
                 return valueTask.Result;
             }
-            else
-            {
-                this.PrintAsyncPath(i);
-                return await valueTask.AsTask();
-            }
-        });
+
+            this.PrintAsyncPath( i );
+            return await valueTask.AsTask();
+        } );
     }
 
-    ValueTask<int> Get(string key)
+    private ValueTask<Int32> Get( String key )
     {
-        if (cachedValues.TryGetValue(key, out int value))
-        {
-            return new ValueTask<int>(value);
-        }
+        if ( cachedValues.TryGetValue( key, out var value ) )
+            return new ValueTask<Int32>( value );
 
-        return new ValueTask<int>(this.LoadFromFileAndCache(key));
+        return new ValueTask<Int32>( this.LoadFromFileAndCache( key ) );
     }
-
-    internal ConcurrentDictionary<string, int> cachedValues = new ConcurrentDictionary<string, int>();
 }

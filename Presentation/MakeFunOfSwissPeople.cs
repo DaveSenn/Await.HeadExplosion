@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 
-[Order(24)]
-class MakeFunOfSwissPeople : IRunnable
+[Order( 24 )]
+internal class MakeFunOfSwissPeople : IRunnable
 {
     public Task Run()
     {

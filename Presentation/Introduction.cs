@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 
-[Order(-1)]
-class Introduction : IRunnable
+[Order( -1 )]
+internal class Introduction : IRunnable
 {
     public Task Run()
     {

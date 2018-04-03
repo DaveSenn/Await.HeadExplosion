@@ -7,10 +7,14 @@ using BenchmarkDotNet.Toolchains.DotNetCli;
 
 public class Config : ManualConfig
 {
+    #region Ctor
+
     public Config()
     {
-        Add(MarkdownExporter.GitHub);
-        Add(new MemoryDiagnoser());
-        Add(Job.ShortRun.With(CsProjCoreToolchain.From(new NetCoreAppSettings("netcoreapp2.1", "2.1.0-preview3-26327-02", "2.1-preview3"))));
+        Add( MarkdownExporter.GitHub );
+        Add( new MemoryDiagnoser() );
+        Add( Job.ShortRun.With( CsProjCoreToolchain.From( new NetCoreAppSettings( "netcoreapp2.1", "2.1.0-preview3-26327-02", "2.1-preview3" ) ) ) );
     }
+
+    #endregion
 }

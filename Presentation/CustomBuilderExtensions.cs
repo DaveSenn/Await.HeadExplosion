@@ -1,18 +1,18 @@
 ﻿using System;
 using System.IO;
 
-static class CustomBuilderExtensions
+internal static class CustomBuilderExtensions
 {
-    public static void PrintResult(this CustomBuilder runnable, int result)
+    public static void Explain( this CustomBuilder runnable, TextWriter writer )
     {
-        Console.WriteLine($"Result: {result}");
-    }
-
-    public static void Explain( this CustomBuilder runnable, TextWriter writer)
-    {
-        writer.WriteLine(@"
+        writer.WriteLine( @"
 - Category useless knowledge
 - Make fun of your coworkers
-");
+" );
+    }
+
+    public static void PrintResult( this CustomBuilder runnable, Int32 result )
+    {
+        Console.WriteLine( $"Result: {result}" );
     }
 }

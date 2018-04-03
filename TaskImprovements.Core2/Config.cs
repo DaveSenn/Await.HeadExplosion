@@ -6,10 +6,14 @@ using BenchmarkDotNet.Toolchains.CsProj;
 
 public class Config : ManualConfig
 {
+    #region Ctor
+
     public Config()
     {
-        Add(MarkdownExporter.GitHub);
-        Add(new MemoryDiagnoser());
-        Add(Job.ShortRun.With(CsProjCoreToolchain.NetCoreApp20));
+        Add( MarkdownExporter.GitHub );
+        Add( new MemoryDiagnoser() );
+        Add( Job.ShortRun.With( CsProjCoreToolchain.NetCoreApp20 ) );
     }
+
+    #endregion
 }

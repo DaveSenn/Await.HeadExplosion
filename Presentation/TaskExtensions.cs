@@ -1,19 +1,19 @@
 using System;
 using System.Threading.Tasks;
 
-static class TaskExtensions
+internal static class TaskExtensions
 {
-    public static void Ignore(this Task task)
+    public static void Ignore( this Task task )
     {
     }
 
-    public static async Task IgnoreCancellation(this Task task)
+    public static async Task IgnoreCancellation( this Task task )
     {
         try
         {
-            await task.ConfigureAwait(false);
+            await task.ConfigureAwait( false );
         }
-        catch (OperationCanceledException)
+        catch ( OperationCanceledException )
         {
         }
     }

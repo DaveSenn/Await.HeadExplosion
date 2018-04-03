@@ -1,26 +1,22 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Linq;
 using System.Threading.Tasks;
 
-[Order(7)]
-class SequentialExecution : IRunnable
+[Order( 7 )]
+internal class SequentialExecution : IRunnable
 {
     public async Task Run()
     {
-        var sequential = Enumerable.Range(0, 4).Select(async t =>
-        {
-            this.PrintStart(t);
+        var sequential = Enumerable.Range( 0, 4 )
+                                   .Select( async t =>
+                                   {
+                                       this.PrintStart( t );
 
-            await Task.Delay(1500);
+                                       await Task.Delay( 1500 );
 
-            this.PrintEnd(t);
-            
-        });
+                                       this.PrintEnd( t );
+                                   } );
 
-        foreach (var task in sequential)
-        {
+        foreach ( var task in sequential )
             await task;
-        }
     }
 }

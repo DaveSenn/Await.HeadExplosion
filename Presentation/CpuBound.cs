@@ -1,43 +1,46 @@
 ﻿using System;
 using System.Threading;
 
-static class CpuBound
+internal static class CpuBound
 {
-    public static void Compute(int numberOfElements)
+    #region Constants
+
+    private static readonly Random random = new Random();
+
+    #endregion
+
+    public static void Compute( Int32 numberOfElements )
     {
         var threadId = Thread.CurrentThread.ManagedThreadId;
-        var elements = new int[numberOfElements];
-        for (int i = 0; i < numberOfElements; i++)
-        {
-            elements[i] = random.Next(0, 100);
-        }
+        var elements = new Int32[numberOfElements];
+        for ( var i = 0; i < numberOfElements; i++ )
+            elements[i] = random.Next( 0, 100 );
 
-        var unsorted = string.Join(",", elements);
-        Console.WriteLine($"Begin {numberOfElements}/{threadId}");
+        var unsorted = String.Join( ",", elements );
+        Console.WriteLine( $"Begin {numberOfElements}/{threadId}" );
 
-        Quicksort(elements, 0, elements.Length - 1);
-        
-        Console.WriteLine($"Done {numberOfElements}/{threadId}: '{unsorted}' => '{string.Join(",", elements)}'");
+        Quicksort( elements, 0, elements.Length - 1 );
+
+        Console.WriteLine( $"Done {numberOfElements}/{threadId}: '{unsorted}' => '{String.Join( ",", elements )}'" );
     }
 
-    static void Quicksort(int[] elements, int left, int right)
+    private static void Quicksort( Int32[] elements, Int32 left, Int32 right )
     {
-        int i = left, j = right;
-        var pivot = elements[(left + right) / 2];
+        var i = left;
+        var j = right;
+        var pivot = elements[( left + right ) / 2];
 
-        while (i <= j)
+        while ( i <= j )
         {
-            while (elements[i].CompareTo(pivot) < 0)
-            {
+            while ( elements[i]
+                        .CompareTo( pivot ) < 0 )
                 i++;
-            }
 
-            while (elements[j].CompareTo(pivot) > 0)
-            {
+            while ( elements[j]
+                        .CompareTo( pivot ) > 0 )
                 j--;
-            }
 
-            if (i <= j)
+            if ( i <= j )
             {
                 // Swap
                 var tmp = elements[i];
@@ -50,16 +53,10 @@ static class CpuBound
         }
 
         // Recursive calls
-        if (left < j)
-        {
-            Quicksort(elements, left, j);
-        }
+        if ( left < j )
+            Quicksort( elements, left, j );
 
-        if (i < right)
-        {
-            Quicksort(elements, i, right);
-        }
+        if ( i < right )
+            Quicksort( elements, i, right );
     }
-
-    static Random random = new Random();
 }

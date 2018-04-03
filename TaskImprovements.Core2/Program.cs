@@ -1,8 +1,9 @@
-﻿using BenchmarkDotNet.Running;
+﻿using System;
+using BenchmarkDotNet.Running;
 
-class Program
+internal class Program
 {
-    static void Main(string[] args)
+    private static void Main( String[] args )
     {
         var summary = BenchmarkRunner.Run<TaskImprovements>();
     }

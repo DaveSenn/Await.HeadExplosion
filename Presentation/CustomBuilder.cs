@@ -1,29 +1,30 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
-[Order(23)]
-class CustomBuilder : IRunnable
+[Order( 23 )]
+internal class CustomBuilder : IRunnable
 {
     public async Task Run()
     {
         var result = await Calculate();
-        this.PrintResult(result);
+        this.PrintResult( result );
     }
 
-    static async Taskk<int> Calculate()
+    private static async Taskk<Int32> Calculate()
     {
-        int value = 0;
+        var value = 0;
         value += await GetValue()
-            .ConfigureAwait(false);
+            .ConfigureAwait( false );
         value += await GetValue()
-            .ConfigureAwait(false);
+            .ConfigureAwait( false );
         value += await GetValue()
-            .ConfigureAwait(false);
+            .ConfigureAwait( false );
         return value;
     }
 
-    static async Taskk<int> GetValue()
+    private static async Taskk<Int32> GetValue()
     {
-        await Task.Delay(1);
+        await Task.Delay( 1 );
         return 1;
     }
 }

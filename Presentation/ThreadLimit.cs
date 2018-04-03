@@ -1,54 +1,52 @@
 using System;
-using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
-[Order(18)]
-class ThreadLimit : IRunnable
+[Order( 18 )]
+internal class ThreadLimit : IRunnable
 {
     public async Task Run()
     {
-        await LimitingThreads(TaskCreationOptions.None, false);
-        await LimitingThreads(TaskCreationOptions.None, true );
-        await LimitingThreads(TaskCreationOptions.HideScheduler, false );
-        await LimitingThreads(TaskCreationOptions.HideScheduler, true );
+        await LimitingThreads( TaskCreationOptions.None, false );
+        await LimitingThreads( TaskCreationOptions.None, true );
+        await LimitingThreads( TaskCreationOptions.HideScheduler, false );
+        await LimitingThreads( TaskCreationOptions.HideScheduler, true );
     }
 
-    Task LimitingThreads(TaskCreationOptions options, bool configureAwait)
-    {      
-        this.PrintOptions(options, configureAwait);
-
-        var scheduler = new LimitedConcurrencyLevelTaskScheduler(1);
-        return this.PumpWithSemaphoreConcurrencyTwo((current, token) => 
-        {
-            return Task.Factory.StartNew(() =>
-            {
-                return WorkUnderSpecialScheduler(configureAwait, current);
-            }, CancellationToken.None, options, scheduler)
-            .Unwrap();
-        });
-    }
-    
-    Task WorkUnderSpecialScheduler(bool configureAwait, int current, CancellationToken token = default(CancellationToken))
+    private Task LimitingThreads( TaskCreationOptions options, Boolean configureAwait )
     {
-        var startNewTask = Task.Factory.StartNew(async () =>
+        this.PrintOptions( options, configureAwait );
+
+        var scheduler = new LimitedConcurrencyLevelTaskScheduler( 1 );
+        return this.PumpWithSemaphoreConcurrencyTwo( ( current, token ) =>
         {
-            this.PrintStartNewBefore(current);
+            return Task.Factory.StartNew( () => { return WorkUnderSpecialScheduler( configureAwait, current ); }, CancellationToken.None, options, scheduler )
+                       .Unwrap();
+        } );
+    }
 
-            await Task.Delay(1000, token).ConfigureAwait(configureAwait);
-
-            this.PrintStartNewAfter(current);
-        });
-
-        var runTask = Task.Run(async () =>
+    private Task WorkUnderSpecialScheduler( Boolean configureAwait, Int32 current, CancellationToken token = default )
+    {
+        var startNewTask = Task.Factory.StartNew( async () =>
         {
-            this.PrintRunBefore(current);
+            this.PrintStartNewBefore( current );
 
-            await Task.Delay(1000, token).ConfigureAwait(configureAwait);
+            await Task.Delay( 1000, token )
+                      .ConfigureAwait( configureAwait );
 
-            this.PrintRunAfter(current);
-        });
+            this.PrintStartNewAfter( current );
+        } );
 
-        return Task.WhenAll(startNewTask.Unwrap(), runTask);
+        var runTask = Task.Run( async () =>
+        {
+            this.PrintRunBefore( current );
+
+            await Task.Delay( 1000, token )
+                      .ConfigureAwait( configureAwait );
+
+            this.PrintRunAfter( current );
+        } );
+
+        return Task.WhenAll( startNewTask.Unwrap(), runTask );
     }
 }
